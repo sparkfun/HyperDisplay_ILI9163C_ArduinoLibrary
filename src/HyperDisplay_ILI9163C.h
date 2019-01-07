@@ -165,7 +165,7 @@ public:
 
 
 	// Low-level interface functions to be defined in derived classes:
-	virtual ILI9163C_STAT_t writePacket(ILI9163C_CMD_t* pcmd = NULL, uint8_t* pdata = NULL, uint16_t dlen = 0) = 0;
+	virtual ILI9163C_STAT_t writePacket(ILI9163C_CMD_t* pcmd = NULL, uint8_t* pdata = NULL, uint16_t dlen = 0) = 0;		// This function sends any combination of one command and or dlen data byes
 	// virtual ILI9163C_STAT_t readPacket(ILI9163C_CMD_t* pcmd = NULL, uint8_t* pdata = NULL, uint8_t dlen = 0) = 0;
 
 	// Some Utility Functions
