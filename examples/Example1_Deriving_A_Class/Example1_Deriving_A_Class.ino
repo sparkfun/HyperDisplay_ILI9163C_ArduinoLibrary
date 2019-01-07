@@ -6,8 +6,7 @@ to derive a class to control your custom display using an ILI9163C driver
 Author: Owen Lyke
 Modified: 1/7/19
 
-This software is open source. Use it how you like provided that such use does not cause harm to people.
-
+This software is open source. Use it how you like, just don't hurt people.
 */
 #include "HyperDisplay_ILI9163C.h" // Get it here: https://github.com/sparkfun/HyperDisplay_ILI9163C_ArduinoLibrary or here: (insert arduino lib man link)
 
@@ -112,7 +111,7 @@ void setup() {
   
 
   // Let's test out the function we wrote directly:
-  ILI9163C_CMD_t cmd = 0xAA;
+  ILI9163C_CMD_t cmd = (ILI9163C_CMD_t)0xAA;
   uint8_t dat[DATLEN] = {0xDE, 0xAD, 0xBE, 0xEF};
   ourCustomDriverObject.writePacket(&cmd, dat, sizeof(dat));
 
