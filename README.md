@@ -1,7 +1,7 @@
-HyperDisplay Arduino Library
+HyperDisplay ILI9163C Arduino Library
 ========================================
 
-Providing uniform drawing and printing functions for a wide range of displays in the Arduino environment
+This is a mid-level extension to [HyperDisplay](https://github.com/sparkfun/SparkFun_HyperDisplay). It provides for control of any display using the ILI9163C driver, however it doesn not provide any instantiable classes. To use this driver make sure you have [HyperDisplay](https://github.com/sparkfun/SparkFun_HyperDisplay) then derive a new class for your particular display and implement all pure-virtual functions.
 
 
 Repository Contents
