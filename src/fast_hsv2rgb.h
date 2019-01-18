@@ -37,7 +37,7 @@
 #define HSV_VAL_MAX		255
 
 /* Options: */
-#define HSV_USE_SEXTANT_TEST	/* Limit the hue to 0...360 degrees */
+// #define HSV_USE_SEXTANT_TEST	/* Limit the hue to 0...360 degrees */
 // #define HSV_USE_ASSEMBLY	/* Optimize code using assembly */
 
 #ifdef __cplusplus

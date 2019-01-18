@@ -1,11 +1,64 @@
 #include "HyperDisplay_ILI9163C.h"
 
+#define ARDUINO_STILL_BROKEN 1 // Referring to the epic fail that is SPI.transfer(buf, len)
 
 
 ILI9163C::ILI9163C(uint8_t xSize, uint8_t ySize, ILI9163C_INTFC_t intfc ) : hyperdisplay(xSize, ySize)
 {
 	_intfc = intfc;
 }
+
+ILI9163C_color_18_t ILI9163C::hsvTo18b( uint16_t h, uint8_t s, uint8_t v ){
+	uint8_t r; 
+	uint8_t g;
+	uint8_t b;
+	fast_hsv2rgb_8bit(h, s, v, &r, &g , &b);
+	return rgbTo18b( r, g, b );
+}
+ILI9163C_color_16_t ILI9163C::hsvTo16b( uint16_t h, uint8_t s, uint8_t v ){
+	uint8_t r; 
+	uint8_t g;
+	uint8_t b;
+	fast_hsv2rgb_8bit(h, s, v, &r, &g , &b);
+	return rgbTo16b( r, g, b );
+}
+
+ILI9163C_color_12_t ILI9163C::hsvTo12b( uint16_t h, uint8_t s, uint8_t v, uint8_t odd ){
+	uint8_t r; 
+	uint8_t g;
+	uint8_t b;
+	fast_hsv2rgb_8bit(h, s, v, &r, &g , &b);
+	return rgbTo12b( r, g, b, odd);
+}
+
+ILI9163C_color_18_t ILI9163C::rgbTo18b( uint8_t r, uint8_t g, uint8_t b ){
+	ILI9163C_color_18_t retval;
+	retval.r = r;
+	retval.g = g;
+	retval.b = b;
+	return retval;
+}
+
+ILI9163C_color_16_t ILI9163C::rgbTo16b( uint8_t r, uint8_t g, uint8_t b ){
+	ILI9163C_color_16_t retval;
+	retval.rgh = ((r & 0xF8) | ( g >> 5));
+	retval.glb = (((g & 0x1C) << 3) | (b >> 3));
+	return retval;
+}
+ILI9163C_color_12_t ILI9163C::rgbTo12b( uint8_t r, uint8_t g, uint8_t b, uint8_t odd ){
+	ILI9163C_color_12_t retval;
+	if(odd){
+		retval.b0 = (r >> 4);
+		retval.b1 = ((g & 0xF0) | (b >> 4));
+	}
+	else{
+		retval.b0 = ((r & 0xF0) | ( g >> 4));
+		retval.b1 = (b & 0xF0);
+	}
+	return retval;
+}
+
+
 
 
 uint8_t ILI9163C::getBytesPerPixel( void )
@@ -22,7 +75,7 @@ uint8_t ILI9163C::getBytesPerPixel( void )
 			break;
 
 		case ILI9163C_PXLFMT_12 :
-			bpp = offsetof( ILI9163C_color_12_t, glb) + 1;
+			bpp = offsetof( ILI9163C_color_12_t, b1) + 1;
 			break;
 
 		default :
@@ -498,13 +551,30 @@ ILI9163C_STAT_t ILI9163C_4WSPI::writePacket(ILI9163C_CMD_t* pcmd, uint8_t* pdata
 	if( (pdata != NULL) && (dlen != 0) )
 	{
 		digitalWrite(_dc, HIGH);
-		// Serial.print("Whatsup ketchup?");
-		_spi->transfer(pdata, dlen);
+		// _spi->transfer(pdata, dlen);
+		transferSPIbuffer(pdata, dlen, ARDUINO_STILL_BROKEN );
 	}		
 
 	_spi->endTransaction();	
 	deselectDriver();
 	return ILI9163C_STAT_Nominal;
+}
+
+ILI9163C_STAT_t ILI9163C_4WSPI::transferSPIbuffer(uint8_t* pdata, size_t count, bool arduinoStillBroken ){
+	if(arduinoStillBroken){
+		for(size_t indi = 0; indi < count; indi++){
+			_spi->transfer((uint8_t)*(pdata + indi));
+
+			// Serial.print(*(pdata + indi));
+			// Serial.print(", ");
+		}
+		// Serial.println();
+		return ILI9163C_STAT_Nominal;
+	}
+	else{
+		_spi->transfer(pdata, count);
+		return ILI9163C_STAT_Nominal;
+	}
 }
 
 ILI9163C_STAT_t ILI9163C_4WSPI::selectDriver( void )
@@ -566,7 +636,8 @@ void    ILI9163C_4WSPI::hwxline(hd_hw_extent_t x0, hd_hw_extent_t y0, hd_hw_exte
 				speedupArry[ indj + (indi*bpp) ] = *((uint8_t*)(data) + indj);
 			}
 		}
-		_spi->transfer(speedupArry, len*bpp);
+		// _spi->transfer(speedupArry, len*bpp);
+		transferSPIbuffer(speedupArry, len*bpp, ARDUINO_STILL_BROKEN );
 	}
 	else
 	{
@@ -582,8 +653,9 @@ void    ILI9163C_4WSPI::hwxline(hd_hw_extent_t x0, hd_hw_extent_t y0, hd_hw_exte
 			if( pixelsAvailable >= len ){ pixelsToDraw = len; }
 			else if( pixelsAvailable < len ){ pixelsToDraw = pixelsAvailable; }
 
-			// Draw "pixelsToDraw" pixels using "bpp*pixelsToDraw" bytes
-			_spi->transfer(value, bpp*pixelsToDraw);
+			// // Draw "pixelsToDraw" pixels using "bpp*pixelsToDraw" bytes
+			// _spi->transfer(value, bpp*pixelsToDraw);
+			transferSPIbuffer((uint8_t*)value, bpp*pixelsToDraw, ARDUINO_STILL_BROKEN );
 
 			len -= pixelsToDraw;
 			pixelsDrawn = pixelsToDraw;
@@ -639,7 +711,8 @@ void    ILI9163C_4WSPI::hwyline(hd_hw_extent_t x0, hd_hw_extent_t y0, hd_hw_exte
 				speedupArry[ indj + (indi*bpp) ] = *((uint8_t*)(data) + indj);
 			}
 		}
-		_spi->transfer(speedupArry, len*bpp);
+		// _spi->transfer(speedupArry, len*bpp);
+		transferSPIbuffer(speedupArry, len*bpp, ARDUINO_STILL_BROKEN );
 	}
 	else
 	{
@@ -655,8 +728,9 @@ void    ILI9163C_4WSPI::hwyline(hd_hw_extent_t x0, hd_hw_extent_t y0, hd_hw_exte
 			if( pixelsAvailable >= len ){ pixelsToDraw = len; }
 			else if( pixelsAvailable < len ){ pixelsToDraw = pixelsAvailable; }
 
-			// Draw "pixelsToDraw" pixels using "bpp*pixelsToDraw" bytes
-			_spi->transfer(value, bpp*pixelsToDraw);
+			// // Draw "pixelsToDraw" pixels using "bpp*pixelsToDraw" bytes
+			// _spi->transfer(value, bpp*pixelsToDraw);
+			transferSPIbuffer((uint8_t*)value, bpp*pixelsToDraw, ARDUINO_STILL_BROKEN );
 
 			len -= pixelsToDraw;
 			pixelsDrawn = pixelsToDraw;
@@ -706,7 +780,8 @@ void ILI9163C_4WSPI::hwfillFromArray(hd_hw_extent_t x0, hd_hw_extent_t y0, hd_hw
 	digitalWrite(_dc, HIGH);
 	_spi->beginTransaction(_spisettings);
 
-	_spi->transfer((uint8_t*)data, bpp*numPixels);
+	// _spi->transfer((uint8_t*)data, bpp*numPixels);
+	transferSPIbuffer((uint8_t*)data, bpp*numPixels, ARDUINO_STILL_BROKEN );
 
 	_spi->endTransaction();	
 	deselectDriver();

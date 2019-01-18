@@ -141,8 +141,8 @@ typedef struct ILI9163C_color_16{
 }ILI9163C_color_16_t;
 
 typedef struct ILI9163C_color_12{
-	uint8_t rgh;	// Red, green high
-	uint8_t glb;	// Green low, blue
+	uint8_t b0;	// Red, green high
+	uint8_t b1;	// Green low, blue
 }ILI9163C_color_12_t;
 
 
@@ -160,6 +160,15 @@ protected:
 public:
 
 	ILI9163C(uint8_t xSize, uint8_t ySize, ILI9163C_INTFC_t intfc );	// Constructor
+
+	static ILI9163C_color_18_t hsvTo18b( uint16_t h, uint8_t s, uint8_t v );
+	static ILI9163C_color_16_t hsvTo16b( uint16_t h, uint8_t s, uint8_t v );
+	static ILI9163C_color_12_t hsvTo12b( uint16_t h, uint8_t s, uint8_t v, uint8_t odd);
+
+	static ILI9163C_color_18_t rgbTo18b( uint8_t r, uint8_t g, uint8_t b );
+	static ILI9163C_color_16_t rgbTo16b( uint8_t r, uint8_t g, uint8_t b );
+	static ILI9163C_color_12_t rgbTo12b( uint8_t r, uint8_t g, uint8_t b, uint8_t odd);
+
 
 	
 
@@ -305,6 +314,8 @@ public:
 	ILI9163C_STAT_t selectDriver( void );
 	ILI9163C_STAT_t deselectDriver( void );
 	ILI9163C_STAT_t setSPIFreq( uint32_t freq );
+	virtual ILI9163C_STAT_t transferSPIbuffer(uint8_t* pdata, size_t count, bool arduinoStillBroken );	// This function is necessary only because Arduino's built-in SPI.transfer() function is broken for one-way transfers. (It overwrites the TX data with whatever was received on RX at the time)
+
 
 	virtual void 	hwxline(hd_hw_extent_t x0, hd_hw_extent_t y0, hd_hw_extent_t len, color_t data = NULL, hd_colors_t colorCycleLength = 1, hd_colors_t startColorOffset = 0, bool goLeft = false);
 	virtual void    hwyline(hd_hw_extent_t x0, hd_hw_extent_t y0, hd_hw_extent_t len, color_t data = NULL, hd_colors_t colorCycleLength = 1, hd_colors_t startColorOffset = 0, bool goUp = false);
