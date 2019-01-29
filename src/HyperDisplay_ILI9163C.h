@@ -157,6 +157,16 @@ protected:
 	ILI9163C_INTFC_t _intfc;
 	ILI9163C_PXLFMT_t _pxlfmt;
 
+	// Pure virtual functions from HyperDisplay Implemented:
+	color_t getOffsetColor(color_t base, uint32_t numPixels);
+	void 	hwpixel(hd_hw_extent_t x0, hd_hw_extent_t y0, color_t data = NULL, hd_colors_t colorCycleLength = 1, hd_colors_t startColorOffset = 0);
+    // // Note: only the hwpixel function is implemented at this level because it can be optimized using the writePacket API. Further optimizations are made in further derived classes like 4WSPI (below)
+    // virtual void    hwxline(uint16_t x0, uint16_t y0, uint16_t len, color_t data = NULL, uint16_t colorCycleLength = 1, uint16_t startColorOffset = 0, bool goLeft = false);
+    // virtual void    hwyline(uint16_t x0, uint16_t y0, uint16_t len, color_t data = NULL, uint16_t colorCycleLength = 1, uint16_t startColorOffset = 0, bool goUp = false);
+    // virtual void 	hwrectangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool filled = false, color_t data = NULL, uint16_t colorCycleLength = 1, uint16_t startColorOffset = 0, bool reverseGradient = false, bool gradientVertical = false); 
+    // virtual void 	hwfillFromArray(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint32_t numPixels, color_t data);
+
+
 public:
 
 	ILI9163C(uint8_t xSize, uint8_t ySize, ILI9163C_INTFC_t intfc );	// Constructor
@@ -169,26 +179,12 @@ public:
 	static ILI9163C_color_16_t rgbTo16b( uint8_t r, uint8_t g, uint8_t b );
 	static ILI9163C_color_12_t rgbTo12b( uint8_t r, uint8_t g, uint8_t b, uint8_t odd);
 
-
-	
-
-
 	// Low-level interface functions to be defined in derived classes:
 	virtual ILI9163C_STAT_t writePacket(ILI9163C_CMD_t* pcmd = NULL, uint8_t* pdata = NULL, uint16_t dlen = 0) = 0;		// This function sends any combination of one command and or dlen data byes
 	// virtual ILI9163C_STAT_t readPacket(ILI9163C_CMD_t* pcmd = NULL, uint8_t* pdata = NULL, uint8_t dlen = 0) = 0;
 
 	// Some Utility Functions
 	uint8_t getBytesPerPixel( void );
-
-	// Pure virtual functions from HyperDisplay Implemented:
-	color_t getOffsetColor(color_t base, uint32_t numPixels);
-	void 	hwpixel(hd_hw_extent_t x0, hd_hw_extent_t y0, color_t data = NULL, hd_colors_t colorCycleLength = 1, hd_colors_t startColorOffset = 0);
-    // // Note: only the hwpixel function is implemented at this level because it can be optimized using the writePacket API. Further optimizations are made in further derived classes like 4WSPI (below)
-    // virtual void    hwxline(uint16_t x0, uint16_t y0, uint16_t len, color_t data = NULL, uint16_t colorCycleLength = 1, uint16_t startColorOffset = 0, bool goLeft = false);
-    // virtual void    hwyline(uint16_t x0, uint16_t y0, uint16_t len, color_t data = NULL, uint16_t colorCycleLength = 1, uint16_t startColorOffset = 0, bool goUp = false);
-    // virtual void 	hwrectangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool filled = false, color_t data = NULL, uint16_t colorCycleLength = 1, uint16_t startColorOffset = 0, bool reverseGradient = false, bool gradientVertical = false); 
-    // virtual void 	hwfillFromArray(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint32_t numPixels, color_t data);
-
 
 
 	// Basic Control Functions

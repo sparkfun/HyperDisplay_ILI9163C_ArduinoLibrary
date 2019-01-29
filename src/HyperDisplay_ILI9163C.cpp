@@ -117,18 +117,6 @@ void 	ILI9163C::hwpixel(hd_hw_extent_t x0, hd_hw_extent_t y0, color_t data, hd_c
 	setColumnAddress( (uint16_t)x0, (uint16_t)x0);
 	setRowAddress( (uint16_t)y0, (uint16_t)y0);
 	uint8_t len = getBytesPerPixel( );
-	
-	// Serial.println("RIGH HERE");
-	// Serial.print(x0); 
-	// Serial.print(", "); Serial.print(y0); 
-	// Serial.print(" : "); Serial.print(1); 
-	// Serial.print(" : 0x"); Serial.print((uint32_t)value, HEX); 
-	// Serial.print(" { "); Serial.print(*(((uint8_t *)value) + 0)); 
-	// Serial.print(", "); Serial.print(*(((uint8_t *)value) + 1)); 
-	// Serial.print(", "); Serial.print(*(((uint8_t *)value) + 2)); 
-	// Serial.print("}"); 
-	// Serial.println();
-
 
 	writeToRAM( (uint8_t*)value, len );
 }
