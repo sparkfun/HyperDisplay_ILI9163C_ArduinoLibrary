@@ -552,11 +552,7 @@ ILI9163C_STAT_t ILI9163C_4WSPI::transferSPIbuffer(uint8_t* pdata, size_t count, 
 	if(arduinoStillBroken){
 		for(size_t indi = 0; indi < count; indi++){
 			_spi->transfer((uint8_t)*(pdata + indi));
-
-			// Serial.print(*(pdata + indi));
-			// Serial.print(", ");
 		}
-		// Serial.println();
 		return ILI9163C_STAT_Nominal;
 	}
 	else{

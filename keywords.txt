@@ -17,11 +17,17 @@ ILI9163C_PXLFMT_t	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-ILI9163C	KEYWORD2
-writePacket	KEYWORD2
-getBytesPerPixel	KEYWORD2
 getOffsetColor	KEYWORD2
 hwpixel	KEYWORD2
+ILI9163C	KEYWORD2
+hsvTo18b	KEYWORD2
+hsvTo16b	KEYWORD2
+hsvTo12b	KEYWORD2
+rgbTo18b	KEYWORD2
+rgbTo16b	KEYWORD2
+rgbTo12b	KEYWORD2
+writePacket	KEYWORD2
+getBytesPerPixel	KEYWORD2
 swReset	KEYWORD2
 sleepIn	KEYWORD2
 sleepOut	KEYWORD2
@@ -60,6 +66,7 @@ writePacket	KEYWORD2
 selectDriver	KEYWORD2
 deselectDriver	KEYWORD2
 setSPIFreq	KEYWORD2
+transferSPIbuffer	KEYWORD2
 hwxline	KEYWORD2
 hwyline	KEYWORD2
 hwfillFromArray	KEYWORD2
