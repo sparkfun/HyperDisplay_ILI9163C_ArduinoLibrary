@@ -23,7 +23,7 @@ Documentation
 
 Products that use this Library 
 ---------------------------------
-
+* [SparkFun 1.8 inch TFT Breakout 128x160](https://www.sparkfun.com/products/15143)
 
 Version History
 ---------------
