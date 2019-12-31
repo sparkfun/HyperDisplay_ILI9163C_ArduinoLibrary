@@ -166,6 +166,7 @@ protected:
     // virtual void 	hwrectangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool filled = false, color_t data = NULL, uint16_t colorCycleLength = 1, uint16_t startColorOffset = 0, bool reverseGradient = false, bool gradientVertical = false); 
     // virtual void 	hwfillFromArray(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint32_t numPixels, color_t data);
 
+	void swpixel( hd_extent_t x0, hd_extent_t y0, color_t data = NULL, hd_colors_t colorCycleLength = 1, hd_colors_t startColorOffset = 0);
 
 public:
 
